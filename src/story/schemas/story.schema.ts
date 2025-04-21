@@ -25,6 +25,10 @@ export class Story extends Document {
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userRef: Types.ObjectId;
+
+  @Prop({ default: 0 })
+  likesCount: number;
+
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

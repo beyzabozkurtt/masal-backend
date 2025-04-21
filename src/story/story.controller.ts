@@ -8,6 +8,8 @@ import {
     Put,
     Request,
     UseGuards,
+    Patch,
+    Query
   } from '@nestjs/common';
   import { AuthGuard } from '@nestjs/passport';
   import { StoryService } from './story.service';
@@ -31,12 +33,16 @@ import {
     getMyStories(@Request() req) {
       return this.storyService.findByUser(req.user.userId);
     }
-  
-    // ✅ Herkese açık masallar
-    @Get('public-stories')
-    getPublicStories() {
-      return this.storyService.findPublic();
+    @Get('top-stories')
+    getTopStories(@Query('limit') limit: string) {
+      return this.storyService.getTopStories(Number(limit) || 10);
     }
+    // ✅ Herkese açık masallar
+        @Get('public-stories')
+    getPublicStories(@Query('theme') theme?: string) {
+      return this.storyService.findPublicFiltered(theme);
+}
+
   
     // ✅ Masal güncelleme (sadece sahibi güncelleyebilir)
     @Put(':id')
@@ -51,5 +57,21 @@ import {
     deleteStory(@Param('id') id: string, @Request() req) {
       return this.storyService.delete(id, req.user.userId);
     }
+
+    @Patch(':id/Begeni')
+     BegeniStory(@Param('id') id: string) {
+      console.log('BEĞENİ ISTEGI GELDI:', id);
+     return this.storyService.incrementLike(id);
+}
+
+   @Get(':id')
+     getOneStory(@Param('id') id: string) {
+     return this.storyService.getOne(id);
+}
+
+   
+
+
+
   }
   
