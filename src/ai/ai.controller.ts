@@ -13,8 +13,9 @@ export class AiController {
   @Post('generate')
   @UseGuards(AuthGuard('jwt'))
   async generateAndSave(@Body() dto: any, @Request() req) {
+    console.log('GELEN DTO:', dto);
     const fullStory = await this.aiService.generateStory(dto);
     const newStory = await this.storyService.create({ ...dto, fullStory }, req.user.userId);
     return newStory;
-  }
+  }  
 }

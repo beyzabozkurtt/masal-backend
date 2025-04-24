@@ -10,6 +10,7 @@ import {
   import { CreateStoryDto } from './dto/create-story.dto';
   import { UpdateStoryDto } from './dto/update-story.dto';
   
+  
   @Injectable()
   export class StoryService {
     constructor(
@@ -89,9 +90,9 @@ import {
         query.theme = { $regex: new RegExp(`^${theme}$`, 'i') }; // büyük/küçük harf duyarsız eşleşme
       }
     
-      return this.storyModel.find(query).select('title theme likesCount');
+      return this.storyModel.find(query); // test amaçlı tüm alanları getir
+
     }
-    
     
     
     
