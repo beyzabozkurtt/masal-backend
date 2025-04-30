@@ -69,18 +69,25 @@ import {
     async getOne(id: string): Promise<Story> {
       if (!isValidObjectId(id)) throw new BadRequestException('Geçersiz ID');
     
-      const story = await this.storyModel.findById(id).select('title likesCount');
+      const story = await this.storyModel
+        .findById(id)
+        .populate('userRef', 'name') // 👈 Yazar bilgisi
+        .select('title fullStory likesCount theme characters userRef'); // 👈 Gerekli tüm alanlar
+    
       if (!story) throw new NotFoundException('Masal bulunamadı');
     
       return story;
     }
+    
+    
 
     async getTopStories(limit: number = 10): Promise<Story[]> {
       return this.storyModel
         .find({ isPublic: true })                  // sadece herkese açık masallar
         .sort({ likesCount: -1 })                  // en çok beğenilenden başlayarak sırala
         .limit(limit)                              // belirli sayıda getir (varsayılan: 10)
-        .select('title likesCount theme userRef'); // sadece gerekli alanları döndür
+        .populate('userRef', 'name')
+        .select('title fullStory likesCount theme userRef'); // sadece gerekli alanları döndür
     }
 
     async findPublicFiltered(theme?: string): Promise<Story[]> {
