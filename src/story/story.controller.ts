@@ -37,11 +37,11 @@ import {
     getTopStories(@Query('limit') limit: string) {
       return this.storyService.getTopStories(Number(limit) || 3);
     }
-    // ✅ Herkese açık masallar
-        @Get('public-stories')
+    @Get('public-stories')
     getPublicStories(@Query('theme') theme?: string) {
       return this.storyService.findPublicFiltered(theme);
-}
+    }
+
 
   
     // ✅ Masal güncelleme (sadece sahibi güncelleyebilir)
