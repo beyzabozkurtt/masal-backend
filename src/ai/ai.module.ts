@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AiService } from './ai.service';
 import { AiController } from './ai.controller';
-import { StoryModule } from '../story/story.module'; // ✅ Bunu ekle
+import { StoryModule } from '../story/story.module'; 
 
 @Module({
-  imports: [StoryModule], // ✅ Bunu da içeri ekle
+  imports: [StoryModule], 
   controllers: [AiController],
   providers: [AiService],
 })

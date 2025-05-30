@@ -9,6 +9,7 @@ import {
   import { Story } from './schemas/story.schema';
   import { CreateStoryDto } from './dto/create-story.dto';
   import { UpdateStoryDto } from './dto/update-story.dto';
+  import { StoryTheme } from '../story/enums/theme.enum';
   
   
   @Injectable()
@@ -92,18 +93,17 @@ import {
 
     async findPublicFiltered(theme?: string): Promise<Story[]> {
       const query: any = { isPublic: true };
-    
-      if (theme) {
-        query.theme = { $regex: new RegExp(`^${theme}$`, 'i') }; // büyük/küçük harf duyarsız eşleşme
-      }
-    
-      return this.storyModel.find(query); // test amaçlı tüm alanları getir
 
+      if (theme) {
+        const themeUpper = theme.toUpperCase(); // kullanıcı küçük harf yollarsa da eşleşsin
+        if (!Object.keys(StoryTheme).includes(themeUpper)) {
+          throw new BadRequestException('Geçersiz tema.');
+        }
+
+        query.theme = StoryTheme[themeUpper as keyof typeof StoryTheme];
+      }
+
+      return this.storyModel.find(query);
     }
-    
-    
-    
-    
-    
   }
   
