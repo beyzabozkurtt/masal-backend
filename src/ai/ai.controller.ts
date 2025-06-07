@@ -13,8 +13,20 @@ export class AiController {
   @Post('generate')
   @UseGuards(AuthGuard('jwt'))
   async generateAndSave(@Body() dto: any, @Request() req) {
+    console.log('GELEN DTO:', dto);
+
+    // 1. Masal metnini oluştur
     const fullStory = await this.aiService.generateStory(dto);
-    const newStory = await this.storyService.create({ ...dto, fullStory }, req.user.userId);
+
+    // 2. Masala uygun görseli oluştur
+    const imageUrl = await this.aiService.generateImage(dto);
+
+    // 3. Masal ve görseli veritabanına kaydet
+    const newStory = await this.storyService.create(
+      { ...dto, fullStory, imageUrl },
+      req.user.userId,
+    );
+
     return newStory;
   }
 }

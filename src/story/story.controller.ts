@@ -37,7 +37,7 @@ import {
     }
     @Get('top-stories')
     getTopStories(@Query('limit') limit: string) {
-      return this.storyService.getTopStories(Number(limit) || 10);
+      return this.storyService.getTopStories(Number(limit) || 3);
     }
     // ✅ Herkese açık masallar
 @Get('public-stories')
