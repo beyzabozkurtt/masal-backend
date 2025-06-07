@@ -1,6 +1,12 @@
-import { IsString, IsBoolean, IsEnum, IsArray, ArrayNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsBoolean,
+  IsEnum,
+  IsArray,
+  ArrayNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import { StoryTheme } from '../enums/theme.enum';
-
 
 export class CreateStoryDto {
   @IsString()
@@ -16,12 +22,13 @@ export class CreateStoryDto {
   @IsString()
   starter: string;
 
-  
   @IsString()
-  fullStory: string; 
-  
+  fullStory: string;
+
   @IsBoolean()
   isPublic: boolean;
 
-
+  @IsOptional()
+  @IsString()
+  imageUrl?: string; // 💜 Cloudinary görseli buraya gelir
 }

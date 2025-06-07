@@ -10,21 +10,38 @@ import {
   import { CreateStoryDto } from './dto/create-story.dto';
   import { UpdateStoryDto } from './dto/update-story.dto';
   import { StoryTheme } from '../story/enums/theme.enum';
+  import { CloudinaryService } from '../cloudinary/cloudinary.service';
+
   
   
   @Injectable()
   export class StoryService {
-    constructor(
-      @InjectModel(Story.name) private readonly storyModel: Model<Story>,
-    ) {}
+  constructor(
+  @InjectModel(Story.name) private readonly storyModel: Model<Story>,
+  private readonly cloudinaryService: CloudinaryService,
+) {}
   
     async create(dto: CreateStoryDto, userId: string): Promise<Story> {
-      const newStory = new this.storyModel({
-        ...dto,
-        userRef: userId,
-      });
-      return await newStory.save();
+  let finalImageUrl = dto.imageUrl;
+
+  // Eğer geçici Azure Blob URL'si ise Cloudinary'ye yükle
+  if (dto.imageUrl?.includes('blob.core.windows.net')) {
+    try {
+      finalImageUrl = await this.cloudinaryService.uploadFromUrl(dto.imageUrl);
+    } catch (error) {
+      console.error('Cloudinary görsel yüklenemedi, geçici URL kullanılacak:', error);
     }
+  }
+
+  const newStory = new this.storyModel({
+    ...dto,
+    userRef: userId,
+    imageUrl: finalImageUrl,
+  });
+
+  return newStory.save();
+}
+
   
     async findByUser(userId: string): Promise<Story[]> {
       return await this.storyModel.find({ userRef: userId });
