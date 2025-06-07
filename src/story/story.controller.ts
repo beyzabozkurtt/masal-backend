@@ -15,6 +15,8 @@ import {
   import { StoryService } from './story.service';
   import { CreateStoryDto } from './dto/create-story.dto';
   import { UpdateStoryDto } from './dto/update-story.dto';
+  import { BadRequestException } from '@nestjs/common';
+
   
   @Controller('story')
   export class StoryController {
@@ -38,10 +40,13 @@ import {
       return this.storyService.getTopStories(Number(limit) || 10);
     }
     // ✅ Herkese açık masallar
-        @Get('public-stories')
-    getPublicStories(@Query('theme') theme?: string) {
-      return this.storyService.findPublicFiltered(theme);
+@Get('public-stories')
+getPublicStories(@Query('theme') theme?: string, @Query('limit') limit?: number) {
+  return this.storyService.findPublicFiltered(theme, limit);
 }
+
+
+
 
   
     // ✅ Masal güncelleme (sadece sahibi güncelleyebilir)

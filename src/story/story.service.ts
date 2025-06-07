@@ -82,18 +82,26 @@ import {
         .select('title likesCount theme userRef'); // sadece gerekli alanları döndür
     }
 
-    async findPublicFiltered(theme?: string): Promise<Story[]> {
-      const query: any = { isPublic: true };
-    
-      if (theme) {
-        query.theme = { $regex: new RegExp(`^${theme}$`, 'i') }; // büyük/küçük harf duyarsız eşleşme
-      }
-    
-      return this.storyModel.find(query).select('title theme likesCount');
-    }
-    
-    
-    
+async findPublicFiltered(theme?: string, limit?: number): Promise<Story[]> {
+  const query: any = { isPublic: true };
+
+  if (theme) {
+    query.theme = { $regex: new RegExp(`^${theme.trim()}$`, 'i') };
+  }
+
+  const options = this.storyModel
+    .find(query)
+    .populate('userRef', 'name')
+    .select('title theme fullStory imageUrl userRef createdAt')
+    .sort({ createdAt: -1 });
+
+  if (limit) {
+    options.limit(limit);
+  }
+
+  return options.exec();
+}
+
     
     
     
