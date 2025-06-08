@@ -21,22 +21,10 @@ import {
   private readonly cloudinaryService: CloudinaryService,
 ) {}
   
-    async create(dto: CreateStoryDto, userId: string): Promise<Story> {
-  let finalImageUrl = dto.imageUrl;
-
-  // Eğer geçici Azure Blob URL'si ise Cloudinary'ye yükle
-  if (dto.imageUrl?.includes('blob.core.windows.net')) {
-    try {
-      finalImageUrl = await this.cloudinaryService.uploadFromUrl(dto.imageUrl);
-    } catch (error) {
-      console.error('Cloudinary görsel yüklenemedi, geçici URL kullanılacak:', error);
-    }
-  }
-
+   async create(dto: CreateStoryDto, userId: string): Promise<Story> {
   const newStory = new this.storyModel({
     ...dto,
     userRef: userId,
-    imageUrl: finalImageUrl,
   });
 
   return newStory.save();
