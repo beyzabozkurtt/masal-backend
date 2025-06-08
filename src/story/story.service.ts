@@ -21,7 +21,12 @@ import {
   private readonly cloudinaryService: CloudinaryService,
 ) {}
   
-   async create(dto: CreateStoryDto, userId: string): Promise<Story> {
+  async create(dto: CreateStoryDto, userId: string): Promise<Story> {
+  // ⛔ Blob görsel linklerini engelle
+  if (dto.imageUrl && dto.imageUrl.includes('blob.core.windows.net')) {
+    throw new BadRequestException('Geçici blob görsel adresi kaydedilemez.');
+  }
+
   const newStory = new this.storyModel({
     ...dto,
     userRef: userId,
@@ -29,6 +34,7 @@ import {
 
   return newStory.save();
 }
+
 
   
     async findByUser(userId: string): Promise<Story[]> {
