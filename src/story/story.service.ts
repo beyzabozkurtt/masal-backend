@@ -23,10 +23,7 @@ import {
   
   async create(dto: CreateStoryDto, userId: string): Promise<Story> {
   // ⛔ Blob görsel linklerini engelle
-  if (dto.imageUrl && dto.imageUrl.includes('blob.core.windows.net')) {
-    throw new BadRequestException('Geçici blob görsel adresi kaydedilemez.');
-  }
-
+  
   const newStory = new this.storyModel({
     ...dto,
     userRef: userId,
