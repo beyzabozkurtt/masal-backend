@@ -97,24 +97,20 @@ import {
     }
 
 
-async findPublicFiltered(theme?: string, limit?: number): Promise<Story[]> {
+async findPublicFiltered(theme?: string, limit: number = 30): Promise<Story[]> {
   const query: any = { isPublic: true };
 
   if (theme) {
     query.theme = { $regex: new RegExp(`^${theme.trim()}$`, 'i') };
   }
 
-  const options = this.storyModel
+  return this.storyModel
     .find(query)
-    .populate('userRef', 'name')
-    .select('title theme fullStory imageUrl userRef createdAt')
-    .sort({ createdAt: -1 });
-
-  if (limit) {
-    options.limit(limit);
-  }
-
-  return options.exec();
+    .limit(limit) // daima limit olsun
+    .sort({ createdAt: -1 })
+    .select('title theme fullStory imageUrl userRef createdAt likesCount') // gerekli alanlar
+    .populate('userRef', 'name') // sadece yazar ismi
+    .lean(); // performans için: mongoose document değil, düz object döndür
 }
 
     
