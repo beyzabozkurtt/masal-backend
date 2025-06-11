@@ -20,7 +20,7 @@ export class AiService {
     const { title, theme, characters, starter } = dto;
 
     const prompt = `
-3-8 yaş arası çocuklar için eğitici, pozitif, yaratıcı ve şiddet içermeyen bir masal yaz. Masalın olay örgüsü yaş grubuna uygun, merak uyandıran, duygusal ve mantıklı olmalı. Masal dili sade, akıcı ve çocukların anlayabileceği düzeyde Türkçe olmalı. Karakterler eğlenceli, sevimli ve çocuklarla empati kurabilecek özelliklerde olsun.
+3-8 yaş arası çocuklar için eğitici, pozitif, yaratıcı ve şiddet içermeyen bir masal yaz. Masalın olay örgüsü yaş grubuna uygun, merak uyandıran, duygusal ve mantıklı olmalı. Masal dili sade, akıcı ve çocukların anlayabileceği düzeyde Türkçe ve türkçe yazım kurallarına uygun şekilde olmalı. Karakterler eğlenceli, sevimli ve çocuklarla empati kurabilecek özelliklerde olsun.
 
 Masalda şu bilgiler kullanılmalı:
 - Başlık: ${title}
@@ -28,7 +28,7 @@ Masalda şu bilgiler kullanılmalı:
 - Karakterler: ${characters.join(', ')}
 - Masalın ilk cümlesi: "${starter}"
 
-Masal çocuklara seçtiği temayla alakalı değerleri hissettirmeli ama öğretici bir tonla değil, doğal, olay örgüsü çocuklara uygun, hikâyesel akışla anlatılmalı.
+Masal çocuklara seçtiği temayla alakalı değerleri hissettirmeli ama öğretici bir tonla değil, doğal, olay örgüsü çocuklara uygun,eğlenceli,merak uyandıran,öğretici hikâyesel akışla anlatılmalı.
 
 Masalın sonunda sadece şu kelime yazmalı: "Son." 
 Bu kelimeden sonra hiçbir cümle gelmemeli.
