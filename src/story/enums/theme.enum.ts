@@ -7,6 +7,5 @@ export enum StoryTheme {
     AILE = 'aile',
     SIHIR = 'sihir',
     KESIF = 'kesif',
-    GIZEM = 'gizem',
   }
   
