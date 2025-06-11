@@ -20,27 +20,39 @@ export class AiService {
     const { title, theme, characters, starter } = dto;
 
     const prompt = `
-3-8 yaş arası çocuklar için yaratıcı, pozitif, eğitici ve şiddet içermeyen bir masal yaz. Masal şu bilgileri içermeli:
+3-8 yaş arası çocuklar için eğitici, pozitif, yaratıcı ve şiddet içermeyen bir masal yaz. Masalın olay örgüsü yaş grubuna uygun, merak uyandıran, duygusal ve mantıklı olmalı. Masal dili sade, akıcı ve çocukların anlayabileceği düzeyde Türkçe olmalı. Karakterler eğlenceli, sevimli ve çocuklarla empati kurabilecek özelliklerde olsun.
 
+Masalda şu bilgiler kullanılmalı:
 - Başlık: ${title}
 - Tema: ${theme}
 - Karakterler: ${characters.join(', ')}
-- Başlangıç cümlesi: "${starter}"
+- Masalın ilk cümlesi: "${starter}"
 
-Masal, çocukların hayal gücünü geliştirsin ve dostluk, yardımlaşma, empati gibi değerleri öğretsin. Masal sonunda "Son." yazmalı. Masal sade, akıcı ve yaş grubuna uygun bir Türkçe ile yazılmalı.
+Masal çocuklara seçtiği temayla alakalı değerleri hissettirmeli ama öğretici bir tonla değil, doğal, olay örgüsü çocuklara uygun, hikâyesel akışla anlatılmalı.
+
+Masalın sonunda sadece şu kelime yazmalı: "Son." 
+Bu kelimeden sonra hiçbir cümle gelmemeli.
 `;
 
-    const response = await this.openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.75,
+        max_tokens: 1000,
+      });
 
-    const message = response.choices[0].message?.content;
-    if (!message) throw new Error('AI mesajı boş geldi');
+      const message = response.choices[0].message?.content;
+      if (!message) throw new Error('AI mesajı boş geldi');
 
-    return message.trim();
+      // Ek güvenlik: "Son." kelimesinden sonrasını sil
+      const trimmed = message.trim();
+      const endIndex = trimmed.indexOf('Son.');
+      return endIndex !== -1 ? trimmed.substring(0, endIndex + 4).trim() : trimmed;
+    } catch (error) {
+      console.error('Masal oluşturma hatası:', error);
+      throw new Error('Masal oluşturulurken bir hata oluştu.');
+    }
   }
 
   async generateImage(dto: {
@@ -49,32 +61,31 @@ Masal, çocukların hayal gücünü geliştirsin ve dostluk, yardımlaşma, empa
     characters: string[];
   }): Promise<string> {
     const prompt = `
-A highly detailed, colorful and beautiful illustration for a children's storybook.
+A highly detailed, colorful, and beautiful full-scene illustration for a children's storybook.
 
-Scene: A magical and imaginative environment matching the theme "${dto.theme}". Include elements that evoke joy, wonder, and nature.
-
-Characters: ${dto.characters.join(', ')} – depicted in a realistic cartoon style, child-friendly with natural proportions and expressive, friendly faces.
-
-Style: Bright colors, soft lighting, realistic textures. Resembling a Pixar-like illustration.
-
-No text, no letters, no watermark. High definition, 8k resolution. No background blur.
+Theme: "${dto.theme}" — reflect the mood and story theme in the environment and tone.
+Characters: ${dto.characters.join(', ')} — drawn in a realistic cartoon style, full-body, child-friendly, with natural expressions and joyful energy.
+Scene: Outdoors in nature, dreamy and magical setting, like a soft fairy tale. Include flowers, trees, sun, clouds, or relevant details to theme.
+Style: Pixar-quality, soft lighting, warm tones, vibrant colors. Gentle and inspiring mood.
+Do not include any text, letters, or watermark. Final output must be sharp, high quality, 8k resolution (512x512 for now). Background must be full, not blurred.
 `;
 
-    const response = await this.openai.images.generate({
-      prompt,
-      n: 1,
-      size: '512x512',
-    });
+    try {
+      const response = await this.openai.images.generate({
+        prompt,
+        n: 1,
+        size: '512x512',
+      });
 
-    if (!response.data || response.data.length === 0) {
-      throw new Error('Görsel oluşturulamadı');
+      const imageUrl = response.data?.[0]?.url;
+      if (!imageUrl) {
+        throw new Error('Görsel URL\'si alınamadı');
+      }
+
+      return imageUrl;
+    } catch (error) {
+      console.error('Görsel oluşturma hatası:', error);
+      throw new Error('Görsel oluşturulamadı.');
     }
-
-    const imageUrl = response.data[0].url;
-    if (!imageUrl) {
-      throw new Error("Görsel URL'si alınamadı");
-    }
-
-    return imageUrl;
   }
 }
