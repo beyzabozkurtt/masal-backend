@@ -20,14 +20,14 @@ export class AiService {
     const { title, theme, characters, starter } = dto;
 
     const prompt = `
-3-8 yaş arası çocuklara uygun, pozitif, eğitici, şiddet içermeyen bir masal yaz:
+3-8 yaş arası çocuklar için yaratıcı, pozitif, eğitici ve şiddet içermeyen bir masal yaz. Masal şu bilgileri içermeli:
 
-Başlık: ${title}
-Tema: ${theme}
-Karakterler: ${characters.join(', ')}
-Başlangıç: ${starter}
+- Başlık: ${title}
+- Tema: ${theme}
+- Karakterler: ${characters.join(', ')}
+- Başlangıç cümlesi: "${starter}"
 
-Masalı tamamla ve sonunda "Son." yaz.
+Masal, çocukların hayal gücünü geliştirsin ve dostluk, yardımlaşma, empati gibi değerleri öğretsin. Masal sonunda "Son." yazmalı. Masal sade, akıcı ve yaş grubuna uygun bir Türkçe ile yazılmalı.
 `;
 
     const response = await this.openai.chat.completions.create({
@@ -43,36 +43,38 @@ Masalı tamamla ve sonunda "Son." yaz.
     return message.trim();
   }
 
-  // --- Yeni eklenen metod: Görsel oluşturma ---
   async generateImage(dto: {
-  title: string;
-  theme: string;
-  characters: string[];
-}): Promise<string> {
-  const prompt = `
-    A highly detailed, photo-realistic, colorful and beautiful scene for a children's storybook.
-    Characters: ${dto.characters.join(', ')} depicted in realistic cartoon style with natural colors and expressive faces.
-    Background: beautiful, natural landscape, vibrant and magical.
-    No text, no letters, no watermark anywhere in the image.
-    High definition, 8k resolution quality.
-    `;
+    title: string;
+    theme: string;
+    characters: string[];
+  }): Promise<string> {
+    const prompt = `
+A highly detailed, colorful and beautiful illustration for a children's storybook.
 
-  const response = await this.openai.images.generate({
-    prompt,
-    n: 1,
-    size: '512x512',
-  });
+Scene: A magical and imaginative environment matching the theme "${dto.theme}". Include elements that evoke joy, wonder, and nature.
 
-  if (!response.data || response.data.length === 0) {
-    throw new Error('Görsel oluşturulamadı');
+Characters: ${dto.characters.join(', ')} – depicted in a realistic cartoon style, child-friendly with natural proportions and expressive, friendly faces.
+
+Style: Bright colors, soft lighting, realistic textures. Resembling a Pixar-like illustration.
+
+No text, no letters, no watermark. High definition, 8k resolution. No background blur.
+`;
+
+    const response = await this.openai.images.generate({
+      prompt,
+      n: 1,
+      size: '512x512',
+    });
+
+    if (!response.data || response.data.length === 0) {
+      throw new Error('Görsel oluşturulamadı');
+    }
+
+    const imageUrl = response.data[0].url;
+    if (!imageUrl) {
+      throw new Error("Görsel URL'si alınamadı");
+    }
+
+    return imageUrl;
   }
-
-  const imageUrl = response.data[0].url;
-  if (!imageUrl) {
-    throw new Error('Görsel URL\'si alınamadı');
-  }
-
-  return imageUrl;
-}
-
 }
