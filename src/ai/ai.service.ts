@@ -61,14 +61,21 @@ Bu kelimeden sonra hiçbir cümle gelmemeli.
     characters: string[];
   }): Promise<string> {
     const prompt = `
-A highly detailed, colorful, and beautiful full-scene illustration for a children's storybook.
+Create a highly detailed, full-scene illustration for a children's storybook.
 
-Theme: "${dto.theme}" — reflect the mood and story theme in the environment and tone.
-Characters: ${dto.characters.join(', ')} — drawn in a realistic cartoon style, full-body, child-friendly, with natural expressions and joyful energy.
-Scene: Outdoors in nature, dreamy and magical setting, like a soft fairy tale. Include flowers, trees, sun, clouds, or relevant details to theme.
-Style: Pixar-quality, soft lighting, warm tones, vibrant colors. Gentle and inspiring mood.
-Do not include any text, letters, or watermark. Final output must be sharp, high quality, 8k resolution (512x512 for now). Background must be full, not blurred.
+The illustration must match the following elements from the story:
+
+- **Theme**: "${dto.theme}" — reflect this theme clearly through the background, setting, and atmosphere.
+- **Characters**: Include ${dto.characters.join(', ')} — show them in the scene interacting naturally. They should be illustrated in a soft, realistic cartoon style, expressive and friendly, designed specifically for 3-8 year old children.
+- **Scene**: Draw a full environment (not portrait), based on a magical, child-friendly world that fits the story’s tone and theme. It should feel immersive, with joyful, curious, and imaginative energy.
+- **Color and Style**: Use vibrant, warm, and magical colors. Style should be similar to Pixar or Studio Ghibli — soft lighting, rich details, no harsh shadows.
+- **Composition Rules**: Full background (no blur), all characters should be clearly visible and active in the scene. No text, no watermarks, no labels.
+
+The final image must feel like a joyful scene from the actual storybook based on the given theme and characters.
+
+Resolution: 8k quality (512x512 generation).
 `;
+
 
     try {
       const response = await this.openai.images.generate({
