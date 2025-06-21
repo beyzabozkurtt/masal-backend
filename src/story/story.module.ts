@@ -4,15 +4,17 @@ import { StoryController } from './story.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Story, StorySchema } from './schemas/story.schema';
 import { User, UserSchema } from '../user/schemas/user.schema';
-import { CloudinaryModule } from '../cloudinary/cloudinary.module'; // 💜
+import { Begeni, BegeniSchema } from '../begeni/schemas/begeni.schema'; // ✅ Eklendi
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Story.name, schema: StorySchema },
       { name: User.name, schema: UserSchema },
+      { name: Begeni.name, schema: BegeniSchema }, // ✅ Buraya eklendi
     ]),
-    CloudinaryModule, // 💥 Buraya taşıyoruz
+    CloudinaryModule,
   ],
   controllers: [StoryController],
   providers: [StoryService],

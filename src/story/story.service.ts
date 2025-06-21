@@ -11,6 +11,7 @@ import {
   import { UpdateStoryDto } from './dto/update-story.dto';
   import { StoryTheme } from '../story/enums/theme.enum';
   import { CloudinaryService } from '../cloudinary/cloudinary.service';
+  import { Begeni,BegeniSchema } from 'src/begeni/schemas/begeni.schema';
 
   
   
@@ -18,6 +19,7 @@ import {
   export class StoryService {
   constructor(
   @InjectModel(Story.name) private readonly storyModel: Model<Story>,
+  @InjectModel(Begeni.name) private readonly begeniModel: Model<Begeni>,
   private readonly cloudinaryService: CloudinaryService,
 ) {}
   
@@ -75,18 +77,33 @@ import {
       );
     }
 
-    async getOne(id: string): Promise<Story> {
-      if (!isValidObjectId(id)) throw new BadRequestException('Geçersiz ID');
-    
-      const story = await this.storyModel
-        .findById(id)
-        .populate('userRef', 'name') // 👈 Yazar bilgisi
-        .select('title fullStory likesCount theme characters userRef'); // 👈 Gerekli tüm alanlar
-    
-      if (!story) throw new NotFoundException('Masal bulunamadı');
-    
-      return story;
-    }
+    async getOne(storyId: string, userId?: string) {
+  const story = await this.storyModel.findById(storyId)
+    .populate('userRef', 'name') // yazar adı için
+    .lean();
+
+  if (!story) {
+    throw new BadRequestException('Masal bulunamadı');
+  }
+
+  // Kullanıcının beğenip beğenmediğini kontrol et
+  let liked = false;
+
+  if (userId) {
+    const existingLike = await this.begeniModel.findOne({
+      userId: userId,
+      storyId: storyId,
+    });
+
+    liked = !!existingLike;
+  }
+
+  return {
+    ...story,
+    liked,
+  };
+}
+
     
     
 

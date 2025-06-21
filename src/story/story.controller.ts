@@ -69,10 +69,12 @@ getPublicStories(@Query('theme') theme?: string, @Query('limit') limit?: number)
      return this.storyService.incrementLike(id);
 }
 
-   @Get(':id')
-     getOneStory(@Param('id') id: string) {
-     return this.storyService.getOne(id);
+  @Get(':id')
+@UseGuards(AuthGuard('jwt')) // Giriş yapan kullanıcıyı alabilmek için
+getOneStory(@Param('id') id: string, @Request() req) {
+  return this.storyService.getOne(id, req.user?.userId);
 }
+
 
    
 
