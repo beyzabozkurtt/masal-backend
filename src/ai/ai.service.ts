@@ -60,21 +60,16 @@ Bu kelimeden sonra hiçbir cümle gelmemeli.
     theme: string;
     characters: string[];
   }): Promise<string> {
-    const prompt = `
-Create a highly detailed, full-scene illustration for a children's storybook.
+   const prompt = `
+A centered and balanced composition showing cute, cartoon-style characters: ${dto.characters.join(', ')}.
+Each character should be fully visible, with clear and expressive faces.
+Set in a magical, fairytale forest with soft lighting.
+No text or logos, high quality children's book illustration.
+`.trim();
 
-The illustration must match the following elements from the story:
 
-- **Theme**: "${dto.theme}" — reflect this theme clearly through the background, setting, and atmosphere.
-- **Characters**: Include ${dto.characters.join(', ')} — show them in the scene interacting naturally. They should be illustrated in a soft, realistic cartoon style, expressive and friendly, designed specifically for 3-8 year old children.
-- **Scene**: Draw a full environment (not portrait), based on a magical, child-friendly world that fits the story’s tone and theme. It should feel immersive, with joyful, curious, and imaginative energy.
-- **Color and Style**: Use vibrant, warm, and magical colors. Style should be similar to Pixar or Studio Ghibli — soft lighting, rich details, no harsh shadows.
-- **Composition Rules**: Full background (no blur), all characters should be clearly visible and active in the scene. No text, no watermarks, no labels.
 
-The final image must feel like a joyful scene from the actual storybook based on the given theme and characters.
 
-Resolution: 8k quality (512x512 generation).
-`;
 
 
     try {
